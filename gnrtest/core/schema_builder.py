@@ -327,17 +327,17 @@ class SchemaBuilder:
 
     def _build_inverse_relations(self) -> None:
         """Build inverse relations from one_one definitions"""
+        # Collect all inverse relations first to avoid modifying dicts during iteration
+        pending = []
         for table in self.schema.tables.values():
             for rel_name, rel in table.relations.items():
                 if rel.one_one:
-                    # Create inverse relation on target table
                     target_fullname = rel.target_fullname
                     if not rel.target_package:
                         target_fullname = f"{table.package}.{rel.target_table}"
 
                     target_table = self.schema.get_table(target_fullname)
                     if target_table and rel.one_one not in target_table.relations:
-                        # Add inverse relation
                         inverse_rel = SchemaRelation(
                             column_name=rel.one_one,
                             target_package=table.package,
@@ -347,4 +347,9 @@ class SchemaBuilder:
                             source_table=table.fullname,
                             is_inverse=True
                         )
-                        target_table.relations[rel.one_one] = inverse_rel
+                        pending.append((target_table, rel.one_one, inverse_rel))
+
+        # Apply all inverse relations
+        for target_table, name, inverse_rel in pending:
+            if name not in target_table.relations:
+                target_table.relations[name] = inverse_rel

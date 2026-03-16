@@ -30,8 +30,9 @@ classifiers = [
 gnrtest = "gnrtest.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/nicod-meg/gnrtest"
-Repository = "https://github.com/nicod-meg/gnrtest"
+Homepage = "https://github.com/jakandre/gnrtest"
+Repository = "https://github.com/jakandre/gnrtest"
+Issues = "https://github.com/jakandre/gnrtest/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
